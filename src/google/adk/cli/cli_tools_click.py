@@ -36,6 +36,7 @@ from . import cli_create
 from . import cli_deploy
 from .. import version
 from ..evaluation.constants import MISSING_EVAL_DEPENDENCIES_MESSAGE
+from ..utils.env_utils import is_env_enabled
 from .cli import run_cli
 from .fast_api import get_fast_api_app
 from .utils import envs
@@ -623,7 +624,8 @@ def cli_eval(
 
   PRINT_DETAILED_RESULTS: Prints detailed results on the console.
   """
-  envs.load_dotenv_for_agent(agent_module_file_path, ".")
+  if not is_env_enabled("ADK_DISABLE_LOAD_DOTENV"):
+    envs.load_dotenv_for_agent(agent_module_file_path, ".")
   logs.setup_adk_logger(getattr(logging, log_level.upper()))
 
   try:

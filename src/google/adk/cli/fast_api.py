@@ -39,6 +39,7 @@ from ..auth.credential_service.in_memory_credential_service import InMemoryCrede
 from ..evaluation.local_eval_set_results_manager import LocalEvalSetResultsManager
 from ..evaluation.local_eval_sets_manager import LocalEvalSetsManager
 from ..runners import Runner
+from ..utils.env_utils import is_env_enabled
 from .adk_web_server import AdkWebServer
 from .service_registry import load_services_module
 from .utils import envs
@@ -161,7 +162,8 @@ def get_fast_api_app(
     from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
 
     def register_processors(provider: TracerProvider) -> None:
-      envs.load_dotenv_for_agent("", agents_dir)
+      if not is_env_enabled("ADK_DISABLE_LOAD_DOTENV"):
+        envs.load_dotenv_for_agent("", agents_dir)
       if project_id := os.environ.get("GOOGLE_CLOUD_PROJECT", None):
         processor = export.BatchSpanProcessor(
             CloudTraceSpanExporter(project_id=project_id)

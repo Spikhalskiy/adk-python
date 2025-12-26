@@ -88,6 +88,7 @@ from ..runners import Runner
 from ..sessions.base_session_service import BaseSessionService
 from ..sessions.session import Session
 from ..utils.context_utils import Aclosing
+from ..utils.env_utils import is_env_enabled
 from .cli_eval import EVAL_SESSION_ID_PREFIX
 from .utils import cleanup
 from .utils import common
@@ -522,7 +523,8 @@ class AdkWebServer:
       return self.runner_dict[app_name]
 
     # Create new runner
-    envs.load_dotenv_for_agent(os.path.basename(app_name), self.agents_dir)
+    if not is_env_enabled("ADK_DISABLE_LOAD_DOTENV"):
+      envs.load_dotenv_for_agent(os.path.basename(app_name), self.agents_dir)
     agent_or_app = self.agent_loader.load_agent(app_name)
 
     # Instantiate extra plugins if configured

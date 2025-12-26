@@ -78,6 +78,7 @@ from ..artifacts.base_artifact_service import BaseArtifactService
 from ..memory.base_memory_service import BaseMemoryService
 from ..sessions.base_session_service import BaseSessionService
 from ..utils import yaml_utils
+from ..utils.env_utils import is_env_enabled
 
 logger = logging.getLogger("google_adk." + __name__)
 
@@ -330,7 +331,8 @@ def _load_gcp_config(
 
   from .utils import envs
 
-  envs.load_dotenv_for_agent("", agents_dir)
+  if not is_env_enabled("ADK_DISABLE_LOAD_DOTENV"):
+    envs.load_dotenv_for_agent("", agents_dir)
 
   project = os.environ.get("GOOGLE_CLOUD_PROJECT")
   location = os.environ.get("GOOGLE_CLOUD_LOCATION")

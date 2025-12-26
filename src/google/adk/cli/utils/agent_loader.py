@@ -32,6 +32,7 @@ from . import envs
 from ...agents import config_agent_utils
 from ...agents.base_agent import BaseAgent
 from ...apps.app import App
+from ...utils.env_utils import is_env_enabled
 from ...utils.feature_decorator import experimental
 from .base_agent_loader import BaseAgentLoader
 
@@ -223,8 +224,9 @@ class AgentLoader(BaseAgentLoader):
     if agents_dir not in sys.path:
       sys.path.insert(0, agents_dir)
 
-    logger.debug("Loading .env for agent %s from %s", agent_name, agents_dir)
-    envs.load_dotenv_for_agent(actual_agent_name, str(agents_dir))
+    if not is_env_enabled("ADK_DISABLE_LOAD_DOTENV"):
+      logger.debug("Loading .env for agent %s from %s", agent_name, agents_dir)
+      envs.load_dotenv_for_agent(actual_agent_name, str(agents_dir))
 
     if root_agent := self._load_from_module_or_package(module_base_name):
       self._record_origin_metadata(
